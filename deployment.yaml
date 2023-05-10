@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ajio-clone-deployment
+  labels:
+    app: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: example
+  template:
+    metadata:
+      labels:
+        app: example
+    spec:
+      containers:
+        - name: ajio-clone
+          image: levinjenson/ajio-clone-devops:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DB_HOST
+              value: mysql
+            - name: DB_NAME
+              value: levin
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              value: root 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ajio-clone-service
+  labels:
+    app: example
+spec:
+  type: NodePort
+  selector:
+    app: example
+  ports:
+    - port: 80
+      targetPort: 8081
+      nodePort: 30000
